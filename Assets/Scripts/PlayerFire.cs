@@ -26,8 +26,13 @@ public class PlayerFire : MonoBehaviour
             // 1) Ray 가 필요하다.
             Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
             RaycastHit hitInfo;
+
+            // 내가 맞추고 싶은 녀석만 맞추도록 하고 싶다.
+            int layer = gameObject.layer;
+            layer = 1 << layer;
+
             // 2) Ray를 던져야 한다.
-            bool result = Physics.Raycast(ray, out hitInfo);
+            bool result = Physics.Raycast(ray, out hitInfo, 100, ~layer);
             // 3) Ray 가 닿은 지점에 파편을 튀게 하고 싶다.
             if(result)
             {
