@@ -35,6 +35,8 @@ public class PlayerFire : MonoBehaviour
                 GameObject bulletEffect = Instantiate(bulletEffectFactory);
                 // 파편을 위치시킨다.
                 bulletEffect.transform.position = hitInfo.point;
+                // 부딪힌 지점이 향하는 방향으로 파편을 튀게하고 싶다.
+                bulletEffect.transform.forward = hitInfo.normal;
 
             }
         }

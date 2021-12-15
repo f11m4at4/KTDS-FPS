@@ -34,7 +34,7 @@ public class CamRotate : MonoBehaviour
         mx += h * rotSpeed * Time.deltaTime;
         my += v * rotSpeed * Time.deltaTime;
 
-        my = Mathf.Clamp(my, -60, 60);
+        my = Mathf.Clamp(my, -90, 90);
         // 2. 방향이 필요
         Vector3 dir = new Vector3(-my, mx, 0);
         // 3. 물체를 회전하고 싶다.
