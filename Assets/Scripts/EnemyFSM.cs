@@ -94,6 +94,7 @@ public class EnemyFSM : MonoBehaviour
         if(distance < attackRange)
         {
             m_state = EnemyState.Attack;
+            currentTime = attackDelayTime;
             return;
         }
         dir.y = 0;
@@ -128,6 +129,7 @@ public class EnemyFSM : MonoBehaviour
         if(currentTime > attackDelayTime)
         {
             currentTime = 0;
+            anim.SetTrigger("Attack");
             print("АјАн!!!!!");
             //Debug.Log("")
         }
@@ -137,6 +139,7 @@ public class EnemyFSM : MonoBehaviour
         if(distance > attackRange)
         {
             m_state = EnemyState.Move;
+            anim.SetTrigger("Move");
         }
     }
 
@@ -167,6 +170,7 @@ public class EnemyFSM : MonoBehaviour
         else
         {
             m_state = EnemyState.Damage;
+            anim.SetTrigger("Damage");
             currentTime = 0;
         }
     }
