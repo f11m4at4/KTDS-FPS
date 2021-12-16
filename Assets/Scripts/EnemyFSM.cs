@@ -162,22 +162,45 @@ public class EnemyFSM : MonoBehaviour
     // 그렇지 않으면 상태를 Idle 로 전환하기
     public void OnDamageProcess()
     {
+        // 이미 상태가 Die 이면 호출되지 않도록하자
+        if(m_state == EnemyState.Die)
+        {
+            return;
+        }
         hp--;
+        currentTime = 0;
+
         if(hp <= 0)
         {
             m_state = EnemyState.Die;
+            anim.SetTrigger("Die");
+            // 충돌체 정지시키자
+            cc.enabled = false;
         }
         else
         {
             m_state = EnemyState.Damage;
             anim.SetTrigger("Damage");
-            currentTime = 0;
         }
     }
 
-
+    // 아래로 계속 내려가다가 안보이면 제거시켜주자
+    // 필요속성 : 죽을때속도, 사라질 위치
+    public float dieSpeed = 0.5f;
+    public float dieYPosition = -2;
     private void Die()
     {
-        Destroy(gameObject);
+        // 일정시간 기다렸다가
+        currentTime += Time.deltaTime;
+        if(currentTime > 2)
+        {
+            // 아래로 가라앉도록 하자
+            // P = P0 + vt
+            transform.position += Vector3.down * dieSpeed * Time.deltaTime;
+            if (transform.position.y < dieYPosition)
+            {
+                Destroy(gameObject);
+            }
+        }
     }
 }

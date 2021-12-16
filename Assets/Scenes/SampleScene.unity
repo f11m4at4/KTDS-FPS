@@ -1058,6 +1058,8 @@ MonoBehaviour:
   attackRange: 2
   attackDelayTime: 2
   damageDelayTime: 2
+  dieSpeed: 0.5
+  dieYPosition: -2
 --- !u!143 &1607012538
 CharacterController:
   m_ObjectHideFlags: 0
