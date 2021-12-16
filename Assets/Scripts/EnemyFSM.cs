@@ -19,12 +19,16 @@ public class EnemyFSM : MonoBehaviour
     EnemyState m_state;
 
     CharacterController cc;
+
+    Animator anim;
+
     // Start is called before the first frame update
     void Start()
     {
         m_state = EnemyState.Idle;
 
         cc = GetComponent<CharacterController>();
+        anim = GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -65,6 +69,8 @@ public class EnemyFSM : MonoBehaviour
         {
             // 3. 상태를 move 로 전환
             m_state = EnemyState.Move;
+            // 애니메이션의 상태도 Move 로 전환
+            anim.SetTrigger("Move");
             currentTime = 0;
         }
     }
