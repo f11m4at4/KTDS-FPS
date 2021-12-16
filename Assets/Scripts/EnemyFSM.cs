@@ -156,7 +156,7 @@ public class EnemyFSM : MonoBehaviour
         hp--;
         if(hp <= 0)
         {
-            Destroy(gameObject);
+            m_state = EnemyState.Die;
         }
         else
         {
@@ -168,6 +168,6 @@ public class EnemyFSM : MonoBehaviour
 
     private void Die()
     {
-        throw new NotImplementedException();
+        Destroy(gameObject);
     }
 }
