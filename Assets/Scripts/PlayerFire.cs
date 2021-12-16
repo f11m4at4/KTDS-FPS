@@ -43,6 +43,12 @@ public class PlayerFire : MonoBehaviour
                 // 부딪힌 지점이 향하는 방향으로 파편을 튀게하고 싶다.
                 bulletEffect.transform.forward = hitInfo.normal;
 
+                // 부딪힌 녀석이 적이면 피격 알림을 주자
+                EnemyFSM enemy = hitInfo.transform.GetComponent<EnemyFSM>();
+                if(enemy)
+                {
+                    enemy.OnDamageProcess();
+                }
             }
         }
     }
