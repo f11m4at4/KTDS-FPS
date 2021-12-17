@@ -34,7 +34,7 @@ public class EnemyFSM : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        print("현재상태 : " + m_state);
+        //print("현재상태 : " + m_state);
         switch(m_state)
         {
             case EnemyState.Idle:
@@ -50,7 +50,7 @@ public class EnemyFSM : MonoBehaviour
                 //Damage();
                 break;
             case EnemyState.Die:
-                Die();
+                //Die();
                 break;
         }
     }
@@ -83,8 +83,13 @@ public class EnemyFSM : MonoBehaviour
     // 필요속성 : 공격범위
     public float attackRange = 2;
 
+    float runSpeed = 0;
     private void Move()
     {
+        // runSpeed 값이 1이되록 하고싶다.
+        //runSpeed = Mathf.Lerp(runSpeed, 1, 2 * Time.deltaTime);
+        //anim.SetFloat("Speed", runSpeed);
+
         // 타겟 방향으로 이동하고 싶다.
         // 1. 방향이 필요
         Vector3 dir = target.position - transform.position;
@@ -148,8 +153,15 @@ public class EnemyFSM : MonoBehaviour
     // Damage 함수를 코루틴을 만들고 싶다.
     private IEnumerator Damage()
     {
+        // 1. 상태를 Damage 로 전환
+        m_state = EnemyState.Damage;
+        // 2. 애니메이션 Damage 상태로 전환
+        anim.SetTrigger("Damage");
+        // 3. 잠시 기다리기
         yield return new WaitForSeconds(damageDelayTime);
+        // 4. 기다린다음 상태를 Idle 로 전환
         m_state = EnemyState.Idle;
+
     }
 
     // 피격 당했을 때 호출되는 함수
@@ -167,18 +179,16 @@ public class EnemyFSM : MonoBehaviour
         hp--;
         currentTime = 0;
 
+        StopAllCoroutines();
+       // StopCoroutine("Damage");
+
         if(hp <= 0)
         {
-            m_state = EnemyState.Die;
-            anim.SetTrigger("Die");
-            // 충돌체 정지시키자
-            cc.enabled = false;
+            StartCoroutine(Die());
+            print("205");
         }
         else
         {
-            m_state = EnemyState.Damage;
-            anim.SetTrigger("Damage");
-
             // 코루틴 시작(등록)
             //StartCoroutine(Damage());
             StartCoroutine("Damage");
@@ -189,19 +199,23 @@ public class EnemyFSM : MonoBehaviour
     // 필요속성 : 죽을때속도, 사라질 위치
     public float dieSpeed = 0.5f;
     public float dieYPosition = -2;
-    private void Die()
+    private IEnumerator Die()
     {
-        // 일정시간 기다렸다가
-        currentTime += Time.deltaTime;
-        if(currentTime > 2)
+        m_state = EnemyState.Die;
+        anim.SetTrigger("Die");
+        // 충돌체 정지시키자
+        cc.enabled = false;
+
+        yield return new WaitForSeconds(2);
+
+        // 아래로 가라앉도록 하자
+        // P = P0 + vt
+        while (transform.position.y > dieYPosition)
         {
-            // 아래로 가라앉도록 하자
-            // P = P0 + vt
             transform.position += Vector3.down * dieSpeed * Time.deltaTime;
-            if (transform.position.y < dieYPosition)
-            {
-                Destroy(gameObject);
-            }
+            yield return null;
         }
+        Destroy(gameObject);
+
     }
 }
