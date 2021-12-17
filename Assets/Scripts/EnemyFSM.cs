@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 // 1. Enemy 의 상태를 처리할 구조를 작성
 // 대기, 이동, 공격, 피격, 죽음
@@ -22,6 +23,7 @@ public class EnemyFSM : MonoBehaviour
 
     Animator anim;
 
+    NavMeshAgent agent;
     // Start is called before the first frame update
     void Start()
     {
@@ -29,6 +31,9 @@ public class EnemyFSM : MonoBehaviour
 
         cc = GetComponent<CharacterController>();
         anim = GetComponentInChildren<Animator>();
+        agent = GetComponent<NavMeshAgent>();
+        agent.enabled = false;
+        target = GameObject.Find("Player").transform;
     }
 
     // Update is called once per frame
@@ -86,11 +91,10 @@ public class EnemyFSM : MonoBehaviour
     float runSpeed = 0;
     private void Move()
     {
-        // runSpeed 값이 1이되록 하고싶다.
-        //runSpeed = Mathf.Lerp(runSpeed, 1, 2 * Time.deltaTime);
-        //anim.SetFloat("Speed", runSpeed);
-
-        // 타겟 방향으로 이동하고 싶다.
+        if(agent.enabled == false)
+        {
+            agent.enabled = true;
+        }
         // 1. 방향이 필요
         Vector3 dir = target.position - transform.position;
         float distance = dir.magnitude;
@@ -100,20 +104,13 @@ public class EnemyFSM : MonoBehaviour
         {
             m_state = EnemyState.Attack;
             currentTime = attackDelayTime;
+            // 길찾기 종료
+            agent.enabled = false;
             return;
         }
-        dir.y = 0;
-        dir.Normalize();
-        // 2. 이동하고 싶다.
-        // P = P0 + vt
-        cc.SimpleMove(dir * speed);
 
-        // 이동하는 방향으로 회전하고 싶다.
-        //transform.LookAt(target);
-        //transform.forward = dir;
-        // 부드럽게 회전하도록 하자 
-        //transform.forward = Vector3.Lerp(transform.forward, dir, 10 * Time.deltaTime);
-        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dir), 10 * Time.deltaTime);
+        // Agent 를 이용한 길찾기
+        agent.destination = target.position;
     }
 
     // Visual Debugging 을 위한 함수
@@ -176,6 +173,9 @@ public class EnemyFSM : MonoBehaviour
         {
             return;
         }
+
+        agent.enabled = false;
+
         hp--;
         currentTime = 0;
 
