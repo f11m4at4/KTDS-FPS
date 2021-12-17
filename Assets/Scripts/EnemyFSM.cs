@@ -47,7 +47,7 @@ public class EnemyFSM : MonoBehaviour
                 Attack();
                 break;
             case EnemyState.Damage:
-                Damage();
+                //Damage();
                 break;
             case EnemyState.Die:
                 Die();
@@ -145,14 +145,11 @@ public class EnemyFSM : MonoBehaviour
 
     // 일정시간 지나면 상태를 Idle 로 전환
     public float damageDelayTime = 2;
-    private void Damage()
+    // Damage 함수를 코루틴을 만들고 싶다.
+    private IEnumerator Damage()
     {
-        currentTime += Time.deltaTime;
-        if(currentTime > damageDelayTime)
-        {
-            currentTime = 0;
-            m_state = EnemyState.Idle;
-        }
+        yield return new WaitForSeconds(damageDelayTime);
+        m_state = EnemyState.Idle;
     }
 
     // 피격 당했을 때 호출되는 함수
@@ -181,6 +178,10 @@ public class EnemyFSM : MonoBehaviour
         {
             m_state = EnemyState.Damage;
             anim.SetTrigger("Damage");
+
+            // 코루틴 시작(등록)
+            //StartCoroutine(Damage());
+            StartCoroutine("Damage");
         }
     }
 
